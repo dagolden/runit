@@ -38,8 +38,10 @@ action :enable do
   end
 
   if new_resource.template
+    template_name = new_resource.template
+    template_name = new_resource.service_name unless template_name.kind_of? String
     template "#{new_resource.directory}/run" do
-      source "sv-#{new_resource.service_name}-run.erb"
+      source "sv-#{template_name}-run.erb"
       cookbook new_resource.cookbook if new_resource.cookbook
       owner new_resource.owner
       group new_resource.group
@@ -58,7 +60,7 @@ action :enable do
         mode 0755
       end
       template "#{new_resource.directory}/log/run" do
-        source "sv-#{new_resource.service_name}-log-run.erb"
+        source "sv-#{template_name}-log-run.erb"
         cookbook new_resource.cookbook if new_resource.cookbook
         owner new_resource.owner
         group new_resource.group
@@ -68,7 +70,7 @@ action :enable do
     end
     if new_resource.finish
       template "#{new_resource.directory}/finish" do
-        source "sv-#{new_resource.service_name}-finish.erb"
+        source "sv-#{template_name}-finish.erb"
         cookbook new_resource.cookbook if new_resource.cookbook
         owner new_resource.owner
         group new_resource.group
@@ -104,7 +106,7 @@ action :enable do
 
     new_resource.control.each do |signal|
       template "#{new_resource.directory}/control/#{signal}" do
-        source "sv-#{new_resource.template}-control-#{signal}.erb"
+        source "sv-#{template_name}-control-#{signal}.erb"
         cookbook new_resource.cookbook if new_resource.cookbook
         owner new_resource.owner
         group new_resource.group
